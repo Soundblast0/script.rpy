@@ -2,7 +2,7 @@
 
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
-define cur_version = "0.4.2"
+define cur_version = "0.4.0"
 
 define persistent.auth_code = ""
 define persistent.uname = ""
@@ -148,8 +148,6 @@ default npc_LumberJack = NpcChar("Lumberjack","male","150", im.Scale("/images/NP
 
 default npc_TheHairCutterRat = NpcChar("Rat Haircutter","female","150", im.Scale("/images/NPC/HairCutterRat/HairCutterRat_say_img.png", 1080, 1600))
 
-default npc_FrozenSlime = NpcChar("Frozen slime","female","150", im.Scale("/images/NPC/FrozenSlime/frozenslime_npc_say.png", 1080, 1600)) #0.4.1
-
 image npcFreya_naked_img:
     "/images/NPC/Freya/Freya_naked_view.png"
     xzoom 1
@@ -161,7 +159,6 @@ default _page = 0
 default selected_num_clothe_page = 0
 default selected_page = 0
 default selected_num = 0
-default selected_page_quest = 0
 
 default card_sort_by_active = False
 default card_sort_by_rare = False
@@ -423,8 +420,6 @@ default item_recipes_scroll_015 = Consumable("Recipies scroll (Snowball (small))
 default item_recipes_scroll_016 = Consumable("Recipies scroll (Snowball)", im.Scale("/Items/recipes_scroll.png",64,64), [{"target":"unlock_combo", "item1":item_snowball_small, "item2":item_snowball, "item_result":item_snowman_item}], "Unlock the recipe in combo list.",1)#0.3.8
 
 default item_soup = Consumable("Just a soup", im.Scale("/Items/soap.png",64,64), [{"target":"hp", "count":9999999}], "Fully restores health.",3)#0.4.0
-
-default item_frozenslimecave_key = Unconsumable("Frozen slime Key", im.Scale("/Items/frozenslime_key.png",64,64), "Cave maze exit key.",1) #0.4.1 
 #----------Items-----------------
     
     
@@ -538,20 +533,20 @@ screen world_map():
     use player_ui_bars()
     if "home_wardrobe" in Player.check_info or "home_attacks" in Player.check_info or "home_sexskills" in Player.check_info:
         image "/gui/map/map_home_check.png" xpos 0 ypos 380 at tf_check_flash
-    imagebutton auto "/gui/map/map_home_%s.png" xpos 0 ypos 380 action [Return({"param":"house"}),With(fade)]
+    imagebutton auto "/gui/map/map_home_%s.png" xpos 0 ypos 380 action [Return("house"),With(fade)]
     if "village_tavern_GafferChoo" in Player.check_info or "village_tavern_Mirana" in Player.check_info or GetQuestsIsNewExists(GafferChoo):
         image "/gui/map/map_bar_check.png" xpos 1100 ypos 220 at tf_check_flash
-    imagebutton auto "/gui/map/map_bar_%s.png" xpos 1100 ypos 220 action [Return({"param":"world_bar"}),With(fade)]
-    imagebutton auto "/gui/map/map_shop_%s.png" xpos 500 ypos 320 action [Return({"param":"shop"}),With(fade)]
-    imagebutton auto "/gui/map/map_church_%s.png" xpos 1520 ypos 320 action [Return({"param":"church"}),With(fade)]
-    imagebutton auto "/gui/map/map_oldfarm_%s.png" xpos 1350 ypos 0 action [Return({"param":"oldfarm"}),With(fade)]
-    imagebutton auto "/gui/map/map_town_square_%s.png" xpos 1080 ypos 590 action [Return({"param":"townsquare"}),With(fade)]
+    imagebutton auto "/gui/map/map_bar_%s.png" xpos 1100 ypos 220 action [Return("world_bar"),With(fade)]
+    imagebutton auto "/gui/map/map_shop_%s.png" xpos 500 ypos 320 action [Return("shop"),With(fade)]
+    imagebutton auto "/gui/map/map_church_%s.png" xpos 1520 ypos 320 action [Return("church"),With(fade)]
+    imagebutton auto "/gui/map/map_oldfarm_%s.png" xpos 1350 ypos 0 action [Return("oldfarm"),With(fade)]
+    imagebutton auto "/gui/map/map_town_square_%s.png" xpos 1080 ypos 590 action [Return("townsquare"),With(fade)]
     if Player.hr >= 3:
-        imagebutton auto "/gui/map/map_prison_%s.png" xpos 831 ypos 670 action [Return({"param":"prison"}),With(fade)]#0.2.0
+        imagebutton auto "/gui/map/map_prison_%s.png" xpos 831 ypos 670 action [Return("prison"),With(fade)]#0.2.0
     else:
-        imagebutton auto "/gui/map/map_prison_%s.png" xpos 831 ypos 670 action [Return({"param":"prison_locked"}),With(fade)]#0.2.0
+        imagebutton auto "/gui/map/map_prison_%s.png" xpos 831 ypos 670 action [Return("prison_locked"),With(fade)]#0.2.0
     
-    imagebutton auto "/gui/map/map_kingplace_%s.png" focus_mask True xpos 405 ypos -15 action [Return({"param":"kingplace"}),With(fade)]
+    imagebutton auto "/gui/map/map_kingplace_%s.png" focus_mask True xpos 405 ypos -15 action [Return("kingplace"),With(fade)]
     
     if len(Player.quests) > 0:
         $_tf = openworldalert
@@ -561,66 +556,9 @@ screen world_map():
         xalign 1.0
         yalign 1.0
         background None
-        imagebutton auto "/gui/ui/ui_gotoworldmap_%s.png" xalign 1.0 yalign 1.0 xoffset 70 yoffset 50 action Return({"param":"openworld"})
+        imagebutton auto "/gui/ui/ui_gotoworldmap_%s.png" xalign 1.0 yalign 1.0 xoffset 70 yoffset 50 action Return("openworld")
     # textbutton "Go to open world" xalign 1.0 yalign 1.0 action Jump("SelectLocationToGo")#call QuestOpenMapLabel(_return["param"]) from _call_QuestOpenMapLabel
     # ui_gotoworldmap.png
-    
-    if worldmap.helps["knowvillage"] == 0:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_0_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":1})
-    if worldmap.helps["knowvillage"] == 1:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_1_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":2})
-    if worldmap.helps["knowvillage"] == 2:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_2_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":3})
-    if worldmap.helps["knowvillage"] == 3:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_3_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":4})
-    if worldmap.helps["knowvillage"] == 4:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_4_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":5})
-    if worldmap.helps["knowvillage"] == 5:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_5_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":6})
-    if worldmap.helps["knowvillage"] == 6:
-        frame:
-            xminimum 1920
-            xmaximum 1920
-            yminimum 1080
-            ymaximum 1080
-            background "gui/ui/helps/knowvillage_6_img.png"
-            imagebutton idle Frame("#00000000") action Return({"param":"knowvillage", "type":7})
 
 label SelectLocationToGo:
     $renpy.block_rollback()
@@ -894,24 +832,23 @@ label world_map_label:
         # $renpy.music.set_pause(False, channel="music_village")
     $renpy.block_rollback()
     $selected_item = None
-    if worldmap.helps["knowvillage"] > 6:
-        scene MainMenuMap with fade
+    scene MainMenuMap with fade
     # hide screen player_for_dialoge
     call screen world_map
     $renpy.block_rollback()
-    if _return["param"] == "house":
+    if _return == "house":
         jump world_map_label_house#call screen world_map_house
-    elif _return["param"] == "world_bar":
+    elif _return == "world_bar":
         # $show_player = True
         # $renpy.music.set_pause(True, channel="music_village")
         jump world_map_label_bar#call screen world_map_bar
     # elif _return == "craft":
         # call screen world_map_craft
-    elif _return["param"] == "shop":
+    elif _return == "shop":
         jump world_map_label_shop
-    elif _return["param"] == "kingplace":
+    elif _return == "kingplace":
         jump world_map_label_kingplace
-    elif _return["param"] == "church":
+    elif _return == "church":
         # $renpy.show_screen("player_for_dialoge", char_appear_left_to_right, 1, 0.85)
         # show screen nunchurch_for_dialoge
         $ee = NunChurch.name
@@ -925,10 +862,10 @@ label world_map_label:
             jump world_map_label
         # hide screen player_for_dialoge
         # hide screen nunchurch_for_dialoge
-    elif _return["param"] == "oldfarm":
+    elif _return == "oldfarm":
         "Old farm in active development"
         # call screen world_map_shop
-    elif _return["param"] == "townsquare":
+    elif _return == "townsquare":
         jump world_townsquare_label
         # menu:
         # "There is nothing in the town square now. Come back later."
@@ -937,16 +874,13 @@ label world_map_label:
                 # $renpy.run(OpenURL("https://www.patreon.com/LustMadness?fan_landing=true"))
             # "Return":
                 # jump world_map_label
-    elif _return["param"] == "prison":
+    elif _return == "prison":
         jump world_prison_label
-    elif _return["param"] == "prison_locked":
+    elif _return == "prison_locked":
         "Your HR is too low. HR must be 3 or more. Complete the tavern quests!"
         jump world_map_label
-    elif _return["param"] == "openworld":
+    elif _return == "openworld":
         jump SelectLocationToGo
-    elif _return["param"] == "knowvillage":
-        $worldmap.helps["knowvillage"] = _return["type"]
-        jump world_map_label
     jump world_map_label
      
 # --------------------------------------------------------------------------------------------------
@@ -1036,8 +970,8 @@ label init_var:
     $enemy_muscular_tactics = EnemyTactics()
     $enemy_muscular_tactics.AddTactics({"phase":0, "type":"lust", "from_to":(0,49), "type_choice_attack":"row", "cards": ({"attack":card_skill_getarmor10, "from_to":(0,0)},{"attack":card_attack_heavyslap, "from_to":(1,1)})})
     $enemy_muscular_tactics.AddTactics({"phase":1, "type":"lust", "from_to":(50,100), "type_choice_attack":"row", "cards": ({"attack":card_skill_getarmor10, "from_to":(0,0)},{"attack":card_attack_veryheavyslap, "from_to":(1,1)})})
-    # $enemy_muscular_desc_f = EnemyDesc("Muscle female", "She is a very strong. She once lifted a cow and threw it on the roof of a barn. She loves to use a strapon. Your holes are in danger.", "muscular_f", "idle", "female", ({"from":5,"to":100,"item":item_testosterone,"condition":None},{"from":0,"to":4,"item":item_ivy,"condition":None}), {"first":"Stop!", "d1":"If you don’t lick my pussy, I’ll crush your head like a pumpkin"}, {"sex_type":"muscular_female_enemysex", "img":"muscular_f_enemysex_anim","max_lust":0,"lust":0,"cum":None}, ({"sex_type":"vaginal_sex_sub", "img":"muscular_f_vaginal_anim","need_max_lust":50,"max_lust":50,"lust":0,"cum":None},), {"sex_type":"muscular_female_solo", "img":"muscular_f_solodildo_anim","max_lust":0,"lust":0,"cum":None},enemy_muscular_tactics ,[mod_barricade], True, 0.55)
-    $enemy_muscular_desc_f = EnemyDesc("Muscle female","muscular", "She is a very strong. She once lifted a cow and threw it on the roof of a barn. She loves to use a strapon. Your holes are in danger.", "muscular_f", "idle", "female", 90, ({"from":5,"to":100,"item":item_testosterone,"condition":None},{"from":0,"to":4,"item":item_ivy,"condition":None}), {"first":"Stop!", "d1":"If you don’t lick my pussy, I’ll crush your head like a pumpkin"}, {"sex_type":"muscular_female_enemysex", "img":"muscular_f_enemysex_anim","max_lust":0,"lust":0,"cum":None},enemy_muscular_tactics ,[mod_barricade], True, 0.55)
+    # $enemy_muscular_desc_f = EnemyDesc("Muscle female", "She is a very strong. She once lifted a cow and threw it on the roof of a barn. She loves to use a strapon. Your holes are in danger.", "muscular_f", "idle", "female", ({"from":5,"to":100,"item":item_testosterone,"condition":None},{"from":0,"to":4,"item":item_ivy,"condition":None}), {"first":"Stop!", "d1":"If you donâ€™t lick my pussy, Iâ€™ll crush your head like a pumpkin"}, {"sex_type":"muscular_female_enemysex", "img":"muscular_f_enemysex_anim","max_lust":0,"lust":0,"cum":None}, ({"sex_type":"vaginal_sex_sub", "img":"muscular_f_vaginal_anim","need_max_lust":50,"max_lust":50,"lust":0,"cum":None},), {"sex_type":"muscular_female_solo", "img":"muscular_f_solodildo_anim","max_lust":0,"lust":0,"cum":None},enemy_muscular_tactics ,[mod_barricade], True, 0.55)
+    $enemy_muscular_desc_f = EnemyDesc("Muscle female","muscular", "She is a very strong. She once lifted a cow and threw it on the roof of a barn. She loves to use a strapon. Your holes are in danger.", "muscular_f", "idle", "female", 90, ({"from":5,"to":100,"item":item_testosterone,"condition":None},{"from":0,"to":4,"item":item_ivy,"condition":None}), {"first":"Stop!", "d1":"If you donâ€™t lick my pussy, Iâ€™ll crush your head like a pumpkin"}, {"sex_type":"muscular_female_enemysex", "img":"muscular_f_enemysex_anim","max_lust":0,"lust":0,"cum":None},enemy_muscular_tactics ,[mod_barricade], True, 0.55)
     $enemy_muscular_desc_f.img["naked1"] = "/Enemies/muscular_f/muscular_f_naked1.png"
     $enemy_muscular_desc_f.available_catch = True
     
@@ -1202,9 +1136,9 @@ label init_var:
     #name, number, type, reward, contractfee, reward_points, reward_item, monsterlist,quest_lvl, hr_need,goal_condition,client, desc, supply_items, target, ui_place, replayable = True, need_sex_types = None, urgent = False, nqctu = [], reward_cards = []
     $quest_list.append(QuestDesc("Lust herb for my wife", 2, "Gathering", 150, 0, 1, [{"from":0,"to":100,"item":item_herb,"condition":None}],1,1,"Deliver 5 Lust herb", WagonKront, "My wife doesn't want to have sex with me for a few month. I need a lust herb to excite her. Please bring me it.",(item_supply_potion,),{"Gathering":[{"item":item_lustherb, "count":5}]},True, None, False, [], [card_skill_getarmor]))
     $quest_list.append(QuestDesc("Mushrooms cave", 3, "Gathering", 300, 50, 1, [{"from":0,"to":100,"item":item_blue_mushroom,"condition":None}],1,1,"Deliver 7 Exciteshroom and 7 Powershroom", HerbalicaFlower, "I need these mushrooms to make potions. There is a huge cave in the forest, find it. Be careful!",(item_supply_potion,item_supply_potion,item_supply_potion),{"Gathering":[{"item":item_exciteshroom, "count":7}, {"item":item_powershroom, "count":7}]},True, None, False, [], [card_skill_harness]))
-    $quest_list.append(QuestDesc("Satyr's cum", 4, "Cum extractor", 500, 70, 2, [{"from":0,"to":100,"item":item_satyr_cum,"condition":None}], 1,1,"Extract and deliver 4 flusk of Satyr's cum", MysteriousFarmer, "I saw some satyrs in the forest, bring me their cum",(item_supply_potion,item_supply_potion,item_supply_potion),{"Cum extractor":[{"item":item_satyr_cum, "count":4}]}, True, {"enemy":[enemy_satyr_desc_m,enemy_satyr_desc_f,enemy_satyr_desc_futa], "sex_types":[sex_titsjob_sub, sex_handjob_sub, sex_vaginal_sex_sub]}, False, [], [card_attack_boobsstrike]))
+    $quest_list.append(QuestDesc("Satyr's cum", 4, "Cum extractor", 500, 70, 2, [{"from":0,"to":100,"item":item_satyr_cum,"condition":None}], 1,1,"Extract and deliver 4 flusk of Satyr's cum", MysteriousFarmer, "I saw some satyrs in the forest, bring me their cum",(item_supply_potion,item_supply_potion,item_supply_potion),{"Cum extractor":[{"item":item_satyr_cum, "count":4}]}, True, [sex_titsjob_sub, sex_handjob_sub, sex_vaginal_sex_sub], False, [], [card_attack_boobsstrike]))
 
-    $quest_list.append(QuestDesc("Forest fairy", 6, "Cum extractor", 1200, 120, 3, [{"from":0,"to":100,"item":item_honey,"condition":None},{"from":0,"to":100,"item":item_hairs,"condition":None}],2,1,"Extract and deliver 2 pollen", HerbalicaFlower, "Amazing! A forest fairy appeared in our forest. I need her pollen to make special potions. Bring me some stuff.",(item_supply_potion,item_supply_potion,item_supply_potion),{"Cum extractor":[{"item":item_pollen, "count":2}]}, True, {"enemy":[enemy_forest_fairy_desc_f], "sex_types":[sex_scissors, sex_blowjob_dom, sex_cunnilingus_sub]}, False, [], [card_attack_twinstrike])) #0.0.4
+    $quest_list.append(QuestDesc("Forest fairy", 6, "Cum extractor", 1200, 120, 3, [{"from":0,"to":100,"item":item_honey,"condition":None},{"from":0,"to":100,"item":item_hairs,"condition":None}],2,1,"Extract and deliver 2 pollen", HerbalicaFlower, "Amazing! A forest fairy appeared in our forest. I need her pollen to make special potions. Bring me some stuff.",(item_supply_potion,item_supply_potion,item_supply_potion),{"Cum extractor":[{"item":item_pollen, "count":2}]}, True, [sex_scissors, sex_blowjob_dom, sex_cunnilingus_sub], False, [], [card_attack_twinstrike])) #0.0.4
     $quest_list.append(QuestDesc("Damn Nymphs", 7, "Slaying", 1500, 300, 5, [{"from":0,"to":100,"item":item_cloth_piece,"condition":None},{"from":0,"to":100,"item":item_hairs,"condition":None}],2,1,"Slaying 3 Nymph", GloomyJack, "Shit! Shit! Shiiiit! Fucking Nymphs started up in the forest. They have fun all the time. I hate it. You must kill them all. If you want, you can fuck them.",(item_supply_potion,item_supply_potion,item_supply_potion),{"Slaying":[{"item":[enemy_nymph_desc_f,enemy_nymph_futa_desc], "count":3, "count_get":0}]},True, None, False, [], [card_attack_buttslap])) #0.0.5
     
     $quest_list.append(QuestDesc("Trouble in the forest", 8, "Slaying", 3000, 600, 5, [{"from":0,"to":100,"item":item_testosterone,"condition":None},{"from":0,"to":100,"item":item_testosterone,"condition":None}],2,1,"Slaying 1 Muscular female", GloomyJack, "A mixture of testosterone and boobs is terrorizing our forest. Do everything so that she is no longer here",(item_supply_potion,item_supply_potion,item_supply_potion),{"Slaying":[{"item":enemy_muscular_desc_f, "count":1, "count_get":0}]},True, None, False, [], [card_attack_boobsstrike])) #0.0.5
@@ -1219,7 +1153,7 @@ label init_var:
     
     $quest_list.append(QuestDesc("Nymphs. Damn Nymphs!", 13, "Cum and squirted", 900, 300, 1, [],2,2,"Cum 1 times on Nymph's face, tits and abdomen or 3 times squrting on Nymphs!", GloomyJack, "These funny bitches squirted me from head to toe while I slept under a tree. DAMN! I want to take revenge on them. Cum 1 on times Nymph's face, tits and abdomen or 3 times squrting on Nymphs!",[],{"Cum and squirted":[{"item":[enemy_nymph_desc_f,enemy_nymph_futa_desc], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_nymph_desc_f,enemy_nymph_futa_desc], "type":["cum_on_abdomen_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_nymph_desc_f,enemy_nymph_futa_desc], "type":["cum_on_tits_dom","cum_squirted_dom"], "count":1, "count_get":0}]},True, None, False, [], []))#0.1.8
     
-    $quest_list.append(QuestDesc("Sweet cream on monster faces", 14, "Cum and squirted", 5400, 900, 3, [],3,2,"Cum or squrting on monters face!", MysteriousFarmer, "I continue my experiments with the cum seed. You could cum or squirting on the faces of some of the monsters. I want to see what happens to them. Don't let me down!",[],{"Cum and squirted":[{"item":[enemy_satyr_desc_f, enemy_satyr_desc_m,enemy_satyr_desc_futa], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_muscular_desc_f], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_forest_fairy_desc_f], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0}]},True, None, False, [], [card_skill_secretknowledge]))#0.2.0
+    $quest_list.append(QuestDesc("Sweet cream on monster faces", 14, "Cum and squirted", 5400, 900, 3, [],3,2,"Cum or squrting on monters face!", MysteriousFarmer, "I continue my experiments with the cum seed. You could cum or squirting on the faces of some of the monsters. I want to see what happens to them. Don't let me down!",[],{"Cum and squirted":[{"item":[enemy_satyr_desc_f, enemy_satyr_desc_m], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_muscular_desc_f], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0},{"item":[enemy_forest_fairy_desc_f], "type":["cum_on_face_dom","cum_squirted_dom"], "count":1, "count_get":0}]},True, None, False, [], [card_skill_secretknowledge]))#0.2.0
     
     $quest_list.append(QuestDesc("I need sleep herb", 15, "Gathering", 750, 90, 2, [{"from":0,"to":100,"item":item_sleep_herb,"condition":None}],2,2,"Deliver 5 Sleep herb", HerbalicaFlower, "I want to make a potent sleeping pill. You have to help me.",(item_supply_potion,),{"Gathering":[{"item":item_sleep_herb, "count":5}]},True, None, False, [], [card_skill_secretknowledge]))#0.2.0
     
@@ -1269,9 +1203,6 @@ label init_var:
     $quest_list.append(QuestDesc("Build 20 bear traps", 36, "Special", 2000, 0, 1, [],5,3,"Build 20 bear traps", MiranaElf, "Can you set 20 beartraps? Our hunters want to catch a lot of monsters.",[],{"Special":[{"item":[item_bear_trap], "count":20, "count_get":0, "desc":["beartrap"], "type":"building"}]},True, None, False, [], [card_catched]))#0.3.7
     
     $quest_list.append(QuestDesc("I want a soup", 37, "Gathering", 1000, 0, 0, [{"from":0,"to":100,"item":item_soup,"condition":None}],3,4,"Deliver 6 snowballs, 1 pumpkin, 1 herb, 1 red mushroom and 1 oil", GafferChoo, "The water in our village has become dirty, and I really want soup. Bring me some snow, I'll melt it and cook my own food.",[],{"Gathering":[{"item":item_snowball, "count":6},{"item":item_pumpkin, "count":1},{"item":item_herb, "count":1},{"item":item_red_mushroom, "count":1},{"item":item_oil, "count":1}]},True, None, False, [], []))#0.4.0
-        
-    $quest_list.append(QuestDesc("Frozen slime secret", 38, "Special", 100, 0, 30, [],5,4,"Find frozen slime in Snow Forest.", GafferChoo, "They say that in order to open a cave in a snowy forest you need a key. According to my guess, you can find this key with the slime. You must open the door to complete the quest.",[],{"Special":[{"item":[item_frozenslimecave_key], "count":"OL01D3", "type":"check_door_open"}]},False, None, False, [], []))#0.4.1
-    $quest_list.append(QuestDesc("Frozen slime request", 39, "Slaying", 20000, 0, 10, [{"from":0,"to":100,"item":item_frozenslimecave_key,"condition":None}],6,4,"Slay 1 satyr, 1 nymph, 1 forest fairy, 1 muscular female and 1 slime girl", GafferChoo, "An icy object from the ass of a frozen slime turned out to be enchanted. To unfreeze it, keep it in yourself and defeat the enemies.",[],{"Slaying":[{"item":[enemy_satyr_desc_m,enemy_satyr_desc_f,enemy_satyr_desc_futa], "count":1, "count_get":0 ,"condition":"with_ice_prop"},{"item":[enemy_nymph_desc_f,enemy_nymph_futa_desc], "count":1, "count_get":0,"condition":"with_ice_prop"},{"item":[enemy_forest_fairy_desc_f], "count":1, "count_get":0,"condition":"with_ice_prop"},{"item":[enemy_muscular_desc_f], "count":1, "count_get":0,"condition":"with_ice_prop"},{"item":[enemy_slime_desc_f], "count":1, "count_get":0,"condition":"with_ice_prop"}]},True, None, False, [38], []))#0.4.1 
     
     #----------QUESTs----------------
     
@@ -1735,15 +1666,11 @@ label init_var:
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D1", (9,4), "door", "NL01D2"))#0.3.7
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D2", (9,7), "door", "NL01D3"))#0.3.7
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D3", (3,1), "door_blocked", "OLU1D0", True, {"type":"need_key_for_cave_OL01D3", "cond":"This door is unlocked a little later."}))#0.3.7
-    $worldmap.addObjectToLoc("OL01", SpecialPoints(4,1, "snowforest_frozenslime", [{"type":"openlabel", "param":"snowforest_frozenslime_label", "takequest":GetQuestByIndex(38)}], True))#0.4.1 #snowforest_frozenslime_label
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D4", (8,9), "door", "OO00D1"))#0.3.7
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D5", (1,9), "door", "OO00D4"))#0.3.7
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D6", (0,3), "door", "PL01D0"))#0.3.7
     $worldmap.addObjectToLoc("OL01", DoorPoints("OL01D7", (0,5), "door", "PL01D1"))#0.3.7
     $worldmap.addObjectToLoc("OL01", GoldenChestPoints(5,4,"goldenchest",{"coins":10000, "points":10, "card":[], "item":[item_hot_drink, item_hot_drink, item_hot_drink, item_hot_drink, item_hot_drink],"cloth":[]}))
-    
-    $worldmap.addLocation(Location("OLU1", "Snow forest",None,True))#underground #0.4.1
-    $worldmap.addObjectToLoc("OLU1", DoorPoints("OLU1D0", (3,1), "door", "OL01D3"))#0.4.1
     
     $worldmap.addLocation(Location("OR01", "Snow forest", None, False))#0.3.7
     $worldmap.addObjectToLoc("OR01", DoorPoints("OR01D0", (1,0), "door", "OO00D3"))#0.3.7
@@ -1933,11 +1860,6 @@ label init_var:
     $items_list.append(item_recipes_scroll_016) 
     #-0.3.8
     $items_list.append(item_soup) 
-    $items_list.append(item_frozenslimecave_key) 
-    
-    #0.4.2
-    $items_list.append(item_locket)
-    
     #--------Items-----------
     
     
@@ -3079,7 +3001,7 @@ label story_in_home:
     g "..."
     e "Ok then i will help you"
     e "But you have to work for me"
-    e "I can’t let you go naked and defenseless on a quest, so keep these panties"
+    e "I canâ€™t let you go naked and defenseless on a quest, so keep these panties"
     if Player.gender == "female":
         call screen quest_reward_cloth_screen([panty_din], True)
         if _return == "addclothes":
@@ -3132,6 +3054,9 @@ label story_in_home:
     $test_clothing = Clothing("Test", "schl_boot", ("foot",),["female", "futa", "male"],relict_test, 2, 3, 1)
     
     $card_test = CardType("Test card", "lust_attack", "card_test_card", "Deal {color=#fff}{size=22}%s{/size}{/color} damage", 1, 5, 0, 1, 1, None, {"cost":1, "st":1, "repeat":1, "amount":8, "amount_block":0, "modifier":None, "desc":None, "features":[]})
+    #################################################
+    
+    
     jump world_map_label_house
 
 
@@ -3156,21 +3081,6 @@ screen sex_popup_info(_name, _text, _timer = 180):
             text _name size 30 color "#ffda10" xalign 0.5
             text _text size 24 color "#fff" xalign 0.5
     timer _timer action Hide("sex_popup_info")
-
-
-#to do replace to image
-screen sex_popup_info_new(_name, _text, _timer = 180):
-    zorder 520
-    $_pos = renpy.get_mouse_pos()
-    frame at show_popup_info(_pos, -230):
-        background Frame("gui/ui/ui_rockbutton.png")
-        xmaximum 350
-        # xminimum 300
-        vbox:
-            text _name size 30 color "#ffda10" xalign 0.5
-            text _text size 24 color "#fff" xalign 0.5
-    timer _timer action Hide("sex_popup_info_new")    
-#_sex_type.img    
 
 screen name_popup_info(_name, _enemylist, _timer = 3):
     zorder 520
@@ -3266,20 +3176,6 @@ screen cond_door_popup_info(_cond, _timer = 5):
                         ymaximum 64
                         background Frame(item_cave_key.icon)   
                     text "%s of %s"%(Player.getCountItems(item_cave_key), 1) size 24 color "#fff" yalign 0.5 xalign 0.5 #xoffset 30
-        elif _cond["type"] == "need_key_for_cave_OL01D3":
-            if Player.hr == 1:
-                text "%s"%_cond["cond"] size 24 color "#fff" xalign 0.5
-            elif Player.hr >= 4:
-                vbox:
-                    text "You need a special key" size 24 color "#fff" xalign 0.5
-                    frame:
-                        xalign 0.5
-                        xminimum 64
-                        xmaximum 64
-                        yminimum 64
-                        ymaximum 64
-                        background Frame(item_frozenslimecave_key.icon)   
-                    text "%s of %s"%(Player.getCountItems(item_frozenslimecave_key), 1) size 24 color "#fff" yalign 0.5 xalign 0.5 #xoffset 30
         else:
             # if _cond["type"] == "need_key_for_door_JJ00D5":
             text "%s"%_cond["cond"] size 24 color "#fff" xalign 0.5
@@ -3328,51 +3224,13 @@ init python:
         return _ret
         
     def RefreshPatronInfo():
-        persistent.uname = ""
-        persistent.pledgecent = 0
-        # persistent.uimg = ""
-        persistent.tier = ""
-        persistent.follower = False
-        persistent.patron_status = ""
-        persistent.pledge_cadence = 0
+        persistent.uname = "Hunter Name"
+        persistent.pledgecent = 1000000
+        persistent.tier = "Hunter 3"
+        persistent.follower = True
+        persistent.patron_status = "active_patron"
+        persistent.pledge_cadence = 1000000
         _error = ""
-        try:
-            userList = json.loads(urllib2.urlopen(urllib2.Request(url='%s/getinfotier?gencode=%s'%(persistent.server, persistent.auth_code)), context = ssl._create_unverified_context()).read())  
-            # userList = json.loads(urllib2.urlopen(urllib2.Request(url='%s/getinfotier?gencode=%s'%(persistent.server, persistent.auth_code))).read())  
-            ret_status = userList["result"] 
-        except:
-            _error = sys.exc_info()[0]
-            ret_status = "Failed"
-            
-        if ret_status == "Sucsess":
-            persistent.uname = userList["uname"]
-            persistent.pledgecent = int(userList["curamount"])/100
-            
-            persistent.tier = userList["tier"]
-            persistent.follower = userList["follower"]
-            persistent.patron_status = userList["patron_status"]
-            persistent.pledge_cadence = userList["pledge_cadence"] #all time
-            if persistent.uimg != userList["uimg"]:
-                persistent.uimg = userList["uimg"]
-                try:
-                    openurl = urllib2.build_opener()
-                    openurl.addheaders = [('User-agent', 'Mozilla/5.0')]
-                    page1 = openurl.open(persistent.uimg)
-                    pic = page1.read()
-                    filename = os.path.join("%s/images/"%config.gamedir, ("profile_image.png"))    # Might as well just make sure you know the file extension.
-                    fout = open(filename, "wb")
-                    fout.write(pic)
-                    fout.close()
-                    
-                    # renpy.notify(["(Sucsess load image)"])
-                except:
-                    # renpy.notify(["(Failed load image)"])
-                    renpy.notify(["(Failed load image)"])
-            
-            renpy.notify(["(Sucsess)"])# Information from patreon has been Successfully updated!"])
-        else:
-            persistent.uimg = ""
-            renpy.notify(["(Failed)"])# Updating information from patreon Failed!"])
     
     def ReAuthPatreonLogin():
         if persistent.auth_code == "":
@@ -3398,9 +3256,7 @@ init python:
         persistent.auth_code = ""
         
     def IsLoggedInPatreon():
-        _ret = False
-        if persistent.auth_code != "" and persistent.uname != "":
-            _ret = True
+        _ret = True
         return _ret
         
     def IsTierHunter1():
@@ -3434,7 +3290,9 @@ init python:
         return _ret
     
     def IsTierGoldenHunter():
-        _ret = True
+        _ret = False
+        if IsLoggedInPatreon() and persistent.tier == "Golden Hunter":
+            _ret = True
         return _ret
     
     def IsTierKingOfHunters():
@@ -3450,19 +3308,15 @@ init python:
         return _ret
     
     def IsHunter3OrHigher():
-        _ret = False
-        if IsTierHunter3() or IsTierHunter4() or IsTierHunter5() or IsTierGoldenHunter() or IsTierKingOfHunters():
-            _ret = True
+        _ret = True
         return _ret
         
     def IsTiers():
-        _ret = False
-        if IsTierHunter1() or IsTierHunter2() or IsTierHunter3() or IsTierHunter4() or IsTierHunter5() or IsTierGoldenHunter() or IsTierKingOfHunters():
-            _ret = True
+        _ret = True
         return _ret
         
     def ReturnTier():
-        _ret = ""
+        _ret = "Hunter 3"
         if IsLoggedInPatreon():
             _ret = persistent.tier
         return persistent.tier
